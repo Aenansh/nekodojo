@@ -13,6 +13,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 import { useState } from "react";
 import { Eye, EyeOff, Loader2, UserPlus, Mail, Loader } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -109,15 +115,20 @@ export default function Page() {
             {!pendingVerification ? "Create your Dojo ID" : "Verify your email"}
           </CardTitle>
           <CardDescription className="text-center text-base">
-            {!pendingVerification
-              ? "Join the Dojo and start your journey"
-              : "Enter the code we sent to your email"}
+            {!pendingVerification ? (
+              "Join the Dojo and start your journey"
+            ) : (
+              <>
+                <p>Enter the code we sent to your email</p>
+                <span className="text-muted-foreground text-xs">{email}</span>
+              </>
+            )}
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-5">
           {!pendingVerification ? (
-            <div className="space-y-5">
+            <div className="space-y-5 flex flex-col w-full">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium">
                   Email
@@ -178,7 +189,7 @@ export default function Page() {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-
+                <div id="clerk-captcha" className="self-center" />
               <Button
                 className="w-full h-11 text-base font-medium shadow-md hover:shadow-lg transition-all cursor-pointer"
                 type="button"
@@ -190,20 +201,43 @@ export default function Page() {
             </div>
           ) : (
             <div className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="code" className="text-sm font-medium">
+              <div className="space-y-2 flex flex-col items-center">
+                <Label htmlFor="code" className="text-sm font-medium text-center">
                   Verification code
                 </Label>
-                <Input
-                  id="code"
-                  name="code"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  placeholder="Enter 6-digit code"
-                  className="h-11 text-center text-lg tracking-widest transition-all focus:ring-2 focus:ring-primary/20"
-                  maxLength={6}
-                  autoComplete="off"
-                />
+                <div className="flex justify-center">
+                  <InputOTP maxLength={6} value={code} onChange={setCode}>
+                    <InputOTPGroup>
+                      <InputOTPSlot
+                        index={0}
+                        className="h-11 w-11 text-lg transition-all focus:ring-2 focus:ring-primary/20"
+                      />
+                      <InputOTPSlot
+                        index={1}
+                        className="h-11 w-11 text-lg transition-all focus:ring-2 focus:ring-primary/20"
+                      />
+                      <InputOTPSlot
+                        index={2}
+                        className="h-11 w-11 text-lg transition-all focus:ring-2 focus:ring-primary/20"
+                      />
+                    </InputOTPGroup>
+                    <InputOTPSeparator />
+                    <InputOTPGroup>
+                      <InputOTPSlot
+                        index={3}
+                        className="h-11 w-11 text-lg transition-all focus:ring-2 focus:ring-primary/20"
+                      />
+                      <InputOTPSlot
+                        index={4}
+                        className="h-11 w-11 text-lg transition-all focus:ring-2 focus:ring-primary/20"
+                      />
+                      <InputOTPSlot
+                        index={5}
+                        className="h-11 w-11 text-lg transition-all focus:ring-2 focus:ring-primary/20"
+                      />
+                    </InputOTPGroup>
+                  </InputOTP>
+                </div>
               </div>
 
               {error && (

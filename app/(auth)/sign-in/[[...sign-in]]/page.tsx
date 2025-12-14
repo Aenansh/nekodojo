@@ -82,14 +82,14 @@ export default function Page() {
         <CardContent className="space-y-5">
           <div className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">
-                Email
+              <Label htmlFor="identifier" className="text-sm font-medium">
+                Email or Username
               </Label>
               <Input
-                type="email"
-                name="email"
-                id="email"
-                placeholder="you@example.com"
+                type="text"
+                name="identifier"
+                id="identifier"
+                placeholder="you@example.com or john_doe"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-11 transition-all focus:ring-2 focus:ring-primary/20"
