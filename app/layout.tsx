@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
-import {
-  Inter,
-  Nunito,
-  Poppins,
-  Roboto,
-  JetBrains_Mono,
-  Fira_Code,
-} from "next/font/google";
+import { Inter, Nunito, Poppins, Roboto, JetBrains_Mono, Fira_Code } from "next/font/google";
 import "./globals.css";
+import { dark } from "@clerk/themes";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const inter = Inter({
   subsets: ["latin"],
@@ -58,12 +53,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${nunito.variable} ${inter.variable} ${poppins.variable} ${fira_code.variable} ${jetbrains_mono.variable} ${roboto.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <ClerkProvider appearance={{ theme: dark }}>
+      <html lang="en" data-theme="luxury">
+        <body
+          className={`${nunito.variable} ${inter.variable} ${poppins.variable} ${fira_code.variable} ${jetbrains_mono.variable} ${roboto.variable} antialiased`}
+        >
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

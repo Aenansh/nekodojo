@@ -1,0 +1,19 @@
+# Don't format these folders
+/node_modules
+/.vscode
+.next
+build
+./dist
+
+# Don't format these files
+package-lock.json
+package.json
+yarn.lock
+.env
+.env.*
+.env.local
+
+# Don't format images and icons
+public/**/*.svg
+public/**/*.png
+public/**/*.jpg
