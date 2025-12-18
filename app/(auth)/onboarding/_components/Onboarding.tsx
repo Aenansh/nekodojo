@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea"; // Ensure you have this component installed
+import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
   CardContent,
@@ -16,7 +16,7 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Loader2, UserCircle, Sparkles, User, FileText } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { updateUser } from "@/app/(auth)/onboarding/action"; // Import the updated action
+import { updateUser } from "@/app/(auth)/onboarding/action";
 import { useState } from "react";
 
 interface UserData {
@@ -54,16 +54,11 @@ const Onboarding = ({initialData} : Props) => {
     setError("");
 
     try {
-      // 1. Update Clerk Profile (Client-side)
-      // Note: Clerk stores First/Last name natively
       await user.update({
         username: formData.username,
         firstName: formData.firstName,
         lastName: formData.lastName,
       });
-
-      // 2. Update Database (Server-side) via Action
-      // This syncs everything + saves the Bio to your DB
       await updateUser(formData);
 
       router.push("/");
@@ -79,7 +74,6 @@ console.log(formData);
     <div className="w-full max-w-lg relative z-10">
       <Card className="shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-[#5d4037] bg-[#1a110d]/90 backdrop-blur-md relative z-10 text-[#eaddcf]">
         <CardHeader className="space-y-3 pb-6 border-b border-[#3e2723]">
-          {/* Icon Container */}
           <div className="mx-auto w-16 h-16 bg-linear-to-br from-[#2c1810] to-[#0f0b0a] border border-[#d4af37]/50 rounded-2xl flex items-center justify-center shadow-lg relative group">
             <UserCircle className="size-8 text-[#d4af37] group-hover:scale-110 transition-transform duration-300" />
             <div className="absolute -top-1 -right-1 w-6 h-6 bg-[#d4af37] rounded-full flex items-center justify-center shadow-md border border-[#1a110d]">
@@ -98,7 +92,6 @@ console.log(formData);
 
         <CardContent className="space-y-5 pt-6">
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* USERNAME FIELD */}
             <div className="space-y-2">
               <Label
                 htmlFor="username"
@@ -124,8 +117,6 @@ console.log(formData);
                 <span>{formData.username.length} / 4+</span>
               </p>
             </div>
-
-            {/* FIRST & LAST NAME GRID */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label
@@ -160,8 +151,6 @@ console.log(formData);
                 />
               </div>
             </div>
-
-            {/* BIO FIELD */}
             <div className="space-y-2">
               <Label
                 htmlFor="bio"

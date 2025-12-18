@@ -24,7 +24,7 @@ const Navbar = () => {
                     <Link href="/dashboard" className="hover:text-[#d4af37] transition-colors">Dashboard</Link>
                     <Link href="/roadmap" className="hover:text-[#d4af37] transition-colors">Roadmap</Link>
                   </div>  */}
-          <div className="w-px h-0"></div> {/* Invisible spacer for now */}
+          <div className="w-px h-0"></div>
         </nav>
         <div className="shrink-0 flex items-center gap-4">
           <SignedOut>
@@ -35,8 +35,6 @@ const Navbar = () => {
                 <span className="relative">Log In</span>
               </button>
             </SignInButton>
-
-            {/* Sign Up (Primary Gold Style) */}
             <SignUpButton>
               <button className="relative px-6 py-2 bg-[#d4af37] text-[#1a110d] font-bold font-mono text-xs tracking-[0.15em] uppercase rounded-sm hover:bg-[#c5a028] hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all duration-300 cursor-pointer">
                 Join

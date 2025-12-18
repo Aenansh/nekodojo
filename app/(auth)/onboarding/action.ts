@@ -19,8 +19,6 @@ export async function updateUser(data: UpdateUserData) {
   }
 
   try {
-    // 1. Update User in Database
-    // Ensure 'bio' exists in your schema.prisma: `bio String?`
     await prisma.user.update({
       where: { id: user.id },
       data: {
@@ -31,8 +29,6 @@ export async function updateUser(data: UpdateUserData) {
         isOnboarded: true,
       },
     });
-
-    // 2. Revalidate to ensure UI shows fresh data
     revalidatePath("/");
     
     return { success: true };
@@ -54,7 +50,6 @@ export async function getUserData() {
       where: {
         email: user.emailAddresses[0].emailAddress,
       },
-      // Select the specific fields you need for the form
       select: {
         id: true,
         firstName: true,

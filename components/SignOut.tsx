@@ -35,8 +35,6 @@ const SignOut = () => {
       ) : (
         <LogOut className="size-5 transition-transform duration-300 group-hover:-translate-x-1" />
       )}
-      
-      {/* Optional: Tooltip-style text for screen readers or hover */}
       <span className="sr-only">Sign Out</span>
     </button>
   );

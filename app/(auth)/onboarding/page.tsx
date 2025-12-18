@@ -1,4 +1,4 @@
-import Onboarding from "@/components/Onboarding";
+import Onboarding from "./_components/Onboarding";
 import { getUserData } from "./action";
 
 export default async function OnboardingPage() {

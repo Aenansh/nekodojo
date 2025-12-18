@@ -24,52 +24,26 @@ export default function AboutHero() {
 
   return (
     <section className="relative min-h-screen w-full flex flex-col items-center justify-center py-32 px-6 bg-[#0f0b0a] overflow-hidden">
-      
-      {/* ==========================================
-          WOODEN TEXTURE BACKGROUND
-      ========================================== */}
       <div className="absolute inset-0 pointer-events-none">
-        
-        {/* 1. Dark Wood Base Color */}
         <div className="absolute inset-0 bg-[#0f0b0a]"></div>
-
-        {/* 2. Vertical Floorboards Pattern 
-               (Creates subtle vertical lines every 60px to simulate planks) */}
         <div 
           className="absolute inset-0 opacity-10"
           style={{
             backgroundImage: `repeating-linear-gradient(90deg, transparent, transparent 59px, #3e2723 59px, #3e2723 60px)`
           }}
         ></div>
-
-        {/* 3. Wood Grain Texture (Subtle Noise) 
-               (Adds a very faint grain effect) */}
         <div 
           className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
           }}
         ></div>
-
-        {/* 4. Ambient "Moonlight" Spotlight 
-               (Highlights the center, fades to black at edges) */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(62,39,35,0.15)_0%,transparent_80%)]"></div>
-
-        {/* 5. Blending Gradients (The "Fade")
-               (Ensures this section blends perfectly with the section above and below) */}
         <div className="absolute top-0 left-0 w-full h-40 bg-linear-to-b from-[#0f0b0a] to-transparent"></div>
         <div className="absolute bottom-0 left-0 w-full h-40 bg-linear-to-t from-[#0f0b0a] to-transparent"></div>
       </div>
-
-
-      {/* ==========================================
-          CONNECTING LINE (Visual Guide)
-      ========================================== */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-32 bg-linear-to-b from-transparent via-[#d4af37]/50 to-transparent"></div>
-
       <div className="max-w-6xl w-full relative z-10">
-        
-        {/* HEADER SECTION */}
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -89,8 +63,6 @@ export default function AboutHero() {
             pure essence of code and logic.
           </p>
         </motion.div>
-
-        {/* GRID SECTION */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {features.map((feature, i) => (
             <motion.div
@@ -101,7 +73,6 @@ export default function AboutHero() {
               transition={{ duration: 0.5, delay: i * 0.2 }}
               className="group relative p-8 rounded-xl bg-[#1a110d]/40 border border-[#3e2723] hover:border-[#d4af37]/50 transition-colors duration-500 hover:bg-[#1a110d]/80 backdrop-blur-sm"
             >
-              {/* Hover Glow */}
               <div className="absolute inset-0 rounded-xl bg-[#d4af37]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               
               <div className="relative z-10">
@@ -120,8 +91,6 @@ export default function AboutHero() {
         </div>
 
       </div>
-      
-      {/* DECORATIVE BOTTOM TEXT */}
       <motion.div 
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
