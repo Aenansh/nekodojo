@@ -1,25 +1,24 @@
-"use client";
+import { getIsOnboarded } from "./action"; // Import the function we fixed previously
+import { redirect } from "next/navigation";
+import { currentUser } from "@clerk/nextjs/server";
 
-import { useSession, useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+export default async function OnboardingLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const isOnboarded = await getIsOnboarded();
 
-const layout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
-  const router = useRouter();
-  const { isSignedIn, isLoaded } = useSession();
-  const user = useUser();
-  useEffect(() => {
-    if (isSignedIn && isLoaded) {
-      if (user.user?.username) router.push("/");
-    }
-  }, [isSignedIn, isLoaded, router]);
+  // 3. Handle Logic
+  // If the user is already onboarded, kick them to the dashboard/home
+  if (isOnboarded) {
+    redirect("/");
+  }
 
-  if (!isLoaded) return;
+  // 4. Render
   return (
     <div data-theme="luxury" className="min-h-screen min-w-full">
       {children}
     </div>
   );
-};
-
-export default layout;
+}

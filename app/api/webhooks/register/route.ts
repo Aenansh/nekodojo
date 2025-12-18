@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   const svix_sg = headerPayload.get("svix-signature");
 
   if (!svix_id || !svix_ts || !svix_sg) {
-    return new Response("Error occured - No svix headers", {status: 400});
+    return new Response("Error occured - No svix headers", { status: 400 });
   }
 
   const payload = await req.json();
@@ -42,7 +42,14 @@ export async function POST(req: Request) {
 
   if (eventType === "user.created") {
     try {
-      const { email_addresses, primary_email_address_id , username, image_url} = evt.data;
+      const {
+        email_addresses,
+        primary_email_address_id,
+        username,
+        image_url,
+        first_name,
+        last_name,
+      } = evt.data;
       const primaryEmail = email_addresses.find((email) => email.id === primary_email_address_id);
 
       if (!primaryEmail) return new Response("No primary email found", { status: 404 });
@@ -53,6 +60,8 @@ export async function POST(req: Request) {
           email: primaryEmail.email_address,
           name: username,
           profileUrl: image_url,
+          firstName: first_name,
+          lastName: last_name,
         },
       });
 

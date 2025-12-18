@@ -94,7 +94,7 @@ export default function Page() {
 
       if (completeSignUp.status === "complete") {
         await setActive({ session: completeSignUp.createdSessionId });
-        router.push("/");
+        router.push("/onboarding");
       }
     } catch (error: any) {
       console.log(JSON.stringify(error, null, 2));
@@ -110,7 +110,7 @@ export default function Page() {
       await signUp.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sso-callback",
-        redirectUrlComplete: "/",
+        redirectUrlComplete: "/onboarding",
       });
     } catch (error: any) {
       console.log(JSON.stringify(error, null, 2));
@@ -127,7 +127,7 @@ export default function Page() {
       await signUp.authenticateWithRedirect({
         strategy: "oauth_github",
         redirectUrl: "/sso-callback",
-        redirectUrlComplete: "/",
+        redirectUrlComplete: "/onboarding",
       });
     } catch (error: any) {
       console.log(JSON.stringify(error, null, 2));

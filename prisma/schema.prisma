@@ -19,7 +19,13 @@ model User {
   email      String  @unique
   name       String?
   profileUrl String?
-  posts      Post[]
+
+  firstName String?
+  lastName  String?
+  bio       String?
+
+  isOnboarded Boolean? @default(false)
+  posts     Post[]
 }
 
 model Post {
