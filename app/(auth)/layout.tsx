@@ -1,4 +1,4 @@
-import { getIsOnboarded } from "./action"; // Import the function we fixed previously
+import { getIsOnboarded } from "./action";
 import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs/server";
 
@@ -7,15 +7,11 @@ export default async function OnboardingLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const currUser = await currentUser();
   const isOnboarded = await getIsOnboarded();
-
-  // 3. Handle Logic
-  // If the user is already onboarded, kick them to the dashboard/home
-  if (isOnboarded) {
+  if (isOnboarded && currUser) {
     redirect("/");
   }
-
-  // 4. Render
   return (
     <div data-theme="luxury" className="min-h-screen min-w-full">
       {children}

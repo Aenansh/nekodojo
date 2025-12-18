@@ -2,10 +2,12 @@ import { ReactNode } from "react";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
+import { getIsOnboarded } from "../(auth)/action";
 
 const layout = async ({ children }: Readonly<{ children: ReactNode }>) => {
   const user = await currentUser();
-  if (user && !user.username) redirect("/onboarding");
+  const userOnboarded = await getIsOnboarded();
+  if (user && !userOnboarded) redirect("/onboarding");
 
   return (
     <>
