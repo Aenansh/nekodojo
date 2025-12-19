@@ -1,10 +1,11 @@
-import { Webhook } from "svix";
-import { headers } from "next/headers";
-import { WebhookEvent } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { headers } from "next/headers";
+import { Webhook } from "svix";
+import { WebhookEvent } from "@clerk/nextjs/server";
 
 export async function POST(req: Request) {
-  const webhookSecret = process.env.CLERK_WEBHOOK_SIGNING_SECRET;
+  const webhookSecret = process.env.CLERK_WEBHOOK_DELETING_SECRET;
+
   if (!webhookSecret) throw new Error("Please add webhook secret");
 
   const headerPayload = await headers();
@@ -36,43 +37,8 @@ export async function POST(req: Request) {
   }
 
   const { id } = evt.data;
-  const eventType = evt.type;
-  if (eventType === "user.created") {
-    try {
-      const {
-        email_addresses,
-        primary_email_address_id,
-        username,
-        image_url,
-        first_name,
-        last_name,
-      } = evt.data;
-      const primaryEmail = email_addresses.find((email) => email.id === primary_email_address_id);
-
-      if (!primaryEmail) return new Response("No primary email found", { status: 404 });
-
-      const newUser = await prisma.user.create({
-        data: {
-          id: evt.data.id,
-          email: primaryEmail.email_address,
-          name: username,
-          profileUrl: image_url,
-          firstName: first_name,
-          lastName: last_name,
-        },
-      });
-
-      console.log("new user created", newUser);
-    } catch (error) {
-      console.error("Error creating user", error);
-      return new Response("Error occured", { status: 500 });
-    }
-  }
-
   if (evt.type === "user.deleted") {
     try {
-      const { id } = evt.data;
-
       if (!id) {
         return new Response("No user ID found", { status: 400 });
       }

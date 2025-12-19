@@ -4,33 +4,45 @@ import { prisma } from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-interface UpdateUserData {
-  username: string;
-  firstName: string;
-  lastName: string;
-  bio: string;
-}
-
-export async function updateUser(data: UpdateUserData) {
+export async function updateUser(formData: FormData) {
   const user = await currentUser();
 
   if (!user) {
     throw new Error("Unauthorized");
   }
+  const email = user.emailAddresses[0].emailAddress;
+  const data = {
+    username: formData.get("username") as string,
+    firstName: formData.get("firstName") as string,
+    lastName: formData.get("lastName") as string,
+    bio: formData.get("bio") as string,
+    isOnboarded: true,
+  };
 
   try {
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
+    await prisma.user.upsert({
+      where: {
+        email: email,
+      },
+      update: {
         name: data.username,
         firstName: data.firstName,
         lastName: data.lastName,
-        bio: data.bio, 
+        bio: data.bio,
+        isOnboarded: true,
+      },
+      create: {
+        id: user.id,
+        email: email,
+        name: data.username,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        bio: data.bio,
         isOnboarded: true,
       },
     });
     revalidatePath("/");
-    
+
     return { success: true };
   } catch (error) {
     console.error("Failed to update user:", error);

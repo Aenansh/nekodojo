@@ -16,7 +16,7 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Loader2, UserCircle, Sparkles, User, FileText } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { updateUser } from "@/app/(auth)/onboarding/action";
+import { updateUser } from "../action";
 import { useState } from "react";
 
 interface UserData {
@@ -25,12 +25,11 @@ interface UserData {
   name?: string | null;
   bio?: string | null;
 }
-
 interface Props {
   initialData: UserData | null;
 }
 
-const Onboarding = ({initialData} : Props) => {
+const Onboarding = ({ initialData }: Props) => {
   const [formData, setFormData] = useState({
     firstName: initialData?.firstName || "",
     lastName: initialData?.lastName || "",
@@ -59,7 +58,13 @@ const Onboarding = ({initialData} : Props) => {
         firstName: formData.firstName,
         lastName: formData.lastName,
       });
-      await updateUser(formData);
+      const dataToSend = new FormData();
+      dataToSend.append("username", formData.username);
+      dataToSend.append("firstName", formData.firstName);
+      dataToSend.append("lastName", formData.lastName);
+      dataToSend.append("bio", formData.bio);
+      
+      await updateUser(dataToSend);
 
       router.push("/");
     } catch (err: any) {
@@ -69,7 +74,7 @@ const Onboarding = ({initialData} : Props) => {
       setLoading(false);
     }
   };
-console.log(formData);
+  console.log(formData);
   return (
     <div className="w-full max-w-lg relative z-10">
       <Card className="shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-[#5d4037] bg-[#1a110d]/90 backdrop-blur-md relative z-10 text-[#eaddcf]">

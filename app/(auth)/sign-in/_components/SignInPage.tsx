@@ -249,7 +249,6 @@ const SignInPage = () => {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-
           <Button
             className="w-full h-12 text-base font-bold tracking-widest uppercase shadow-md transition-all cursor-pointer 
                          bg-[#d4af37] text-[#1a110d] hover:bg-[#b5952f] hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] border border-[#d4af37]"
