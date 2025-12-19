@@ -69,25 +69,5 @@ export async function POST(req: Request) {
     }
   }
 
-  if (evt.type === "user.deleted") {
-    try {
-      const { id } = evt.data;
-
-      if (!id) {
-        return new Response("No user ID found", { status: 400 });
-      }
-
-      await prisma.user.delete({
-        where: {
-          id: id,
-        },
-      });
-
-      console.log(`User ${id} deleted from database`);
-    } catch (error) {
-      console.error("Error deleting user from database:", error);
-      return new Response("Error deleting user", { status: 500 });
-    }
-  }
   return new Response("Webhook received successfully!", { status: 200 });
 }

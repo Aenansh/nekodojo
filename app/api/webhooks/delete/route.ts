@@ -37,12 +37,12 @@ export async function POST(req: Request) {
   }
 
   const { id } = evt.data;
+  console.log(id);
   if (evt.type === "user.deleted") {
     try {
       if (!id) {
         return new Response("No user ID found", { status: 400 });
       }
-
       await prisma.user.delete({
         where: {
           id: id,
