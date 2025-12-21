@@ -1,6 +1,15 @@
 import SignOut from "./SignOut";
 import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { BookOpen, HomeIcon, LayoutDashboard, MenuIcon, MessageSquare, User } from "lucide-react";
 import Link from "next/link";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
 
 const Navbar = () => {
   return (
@@ -70,6 +79,93 @@ const Navbar = () => {
               <SignOut />
             </div>
           </SignedIn>
+          <div className="block md:hidden">
+            <Menubar className="border-none bg-transparent p-0">
+              <MenubarMenu>
+                <MenubarTrigger className="cursor-pointer bg-transparent data-[state=open]:bg-[#d4af37]/10 p-2 rounded-md text-[#d4af37] hover:bg-[#d4af37]/10 transition-colors focus:bg-[#d4af37]/10">
+                  <MenuIcon size={24} />
+                </MenubarTrigger>
+
+                <MenubarContent
+                  align="end"
+                  className="min-w-[200px] mt-2 bg-[#1a110d]/95 backdrop-blur-xl border border-[#3e2723] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] rounded-xl p-2 mr-4"
+                >
+                  <MenubarItem
+                    asChild
+                    className="focus:bg-[#d4af37]/10 focus:text-[#d4af37] text-[#eaddcf] cursor-pointer rounded-lg px-3 py-2.5 my-0.5"
+                  >
+                    <Link
+                      href={"/"}
+                      className="flex items-center gap-3 font-mono text-sm tracking-wide"
+                    >
+                      <HomeIcon size={16} className="opacity-70" />
+                      Home
+                    </Link>
+                  </MenubarItem>
+
+                  <MenubarSeparator className="bg-[#3e2723]/50 my-1" />
+
+                  <MenubarItem
+                    asChild
+                    className="focus:bg-[#d4af37]/10 focus:text-[#d4af37] text-[#eaddcf] cursor-pointer rounded-lg px-3 py-2.5 my-0.5"
+                  >
+                    <Link
+                      href={"/profile"}
+                      className="flex items-center gap-3 font-mono text-sm tracking-wide"
+                    >
+                      <User size={16} className="opacity-70" />
+                      Profile
+                    </Link>
+                  </MenubarItem>
+
+                  <MenubarSeparator className="bg-[#3e2723]/50 my-1" />
+
+                  <MenubarItem
+                    asChild
+                    className="focus:bg-[#d4af37]/10 focus:text-[#d4af37] text-[#eaddcf] cursor-pointer rounded-lg px-3 py-2.5 my-0.5"
+                  >
+                    <Link
+                      href={"/problems"}
+                      className="flex items-center gap-3 font-mono text-sm tracking-wide"
+                    >
+                      <BookOpen size={16} className="opacity-70" />
+                      Problems
+                    </Link>
+                  </MenubarItem>
+
+                  <MenubarSeparator className="bg-[#3e2723]/50 my-1" />
+
+                  <MenubarItem
+                    asChild
+                    className="focus:bg-[#d4af37]/10 focus:text-[#d4af37] text-[#eaddcf] cursor-pointer rounded-lg px-3 py-2.5 my-0.5"
+                  >
+                    <Link
+                      href={"/discussions"}
+                      className="flex items-center gap-3 font-mono text-sm tracking-wide"
+                    >
+                      <MessageSquare size={16} className="opacity-70" />
+                      Discussions
+                    </Link>
+                  </MenubarItem>
+
+                  <MenubarSeparator className="bg-[#3e2723]/50 my-1" />
+
+                  <MenubarItem
+                    asChild
+                    className="focus:bg-[#d4af37]/10 focus:text-[#d4af37] text-[#eaddcf] cursor-pointer rounded-lg px-3 py-2.5 my-0.5"
+                  >
+                    <Link
+                      href={"/dashboard"}
+                      className="flex items-center gap-3 font-mono text-sm tracking-wide"
+                    >
+                      <LayoutDashboard size={16} className="opacity-70" />
+                      Dashboard
+                    </Link>
+                  </MenubarItem>
+                </MenubarContent>
+              </MenubarMenu>
+            </Menubar>
+          </div>
         </div>
       </div>
     </header>
