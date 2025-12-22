@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useDebounce } from "use-debounce";
 
 interface Props {
   discussionId: string;
@@ -24,69 +25,88 @@ export default function VoteControl({
   isDisliked,
 }: Props) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+
+  const getStartingVote = () => {
+    if (initialUserVote) return initialUserVote;
+    if (isLiked) return "like";
+    if (isDisliked) return "dislike";
+    return null;
+  };
 
   const [voteState, setVoteState] = useState({
-    userVote: initialUserVote,
+    userVote: getStartingVote(),
     upvotes: initialUpvotes,
     downvotes: initialDownvotes,
   });
+  const [debouncedVote] = useDebounce(voteState.userVote, 500);
+  const isMounted = useRef(false);
+  const previousVoteRef = useRef(voteState.userVote);
+  useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
 
-  const handleVote = async (type: "like" | "dislike") => {
-    setLoading(true);
+    const syncVoteToServer = async () => {
+      if (debouncedVote === previousVoteRef.current) return;
 
-    const previousState = { ...voteState };
-    const isSame = voteState.userVote === type;
-    const isSwitching = voteState.userVote && voteState.userVote !== type;
+      const type = debouncedVote;
 
+      try {
+        const targetType = type || "remove";
+        if (!type) return;
+
+        const res = await fetch(`/api/discussions/${discussionId}/${type}`, {
+          method: "PUT",
+          body: JSON.stringify({ discussionId, type }),
+        });
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            toast.error("Please sign in to vote");
+            router.push("/sign-in");
+            return;
+          }
+          throw new Error("Failed");
+        }
+        previousVoteRef.current = debouncedVote;
+        router.refresh();
+      } catch (error) {
+        toast.error("Failed to sync vote");
+      }
+    };
+
+    syncVoteToServer();
+  }, [debouncedVote]);
+
+  const handleVote = (type: "like" | "dislike") => {
     setVoteState((prev) => {
+      const isSame = prev.userVote === type;
+      const isSwitching = prev.userVote && prev.userVote !== type;
+
       let newUp = prev.upvotes;
       let newDown = prev.downvotes;
-      let newVote = prev.userVote;
+      let newVote: "like" | "dislike" | null = type;
 
       if (isSame) {
         newVote = null;
-        if (type === "like") newUp--;
-        else newDown--;
+        if (type === "like") newUp = Math.max(0, newUp - 1);
+        else newDown = Math.max(0, newDown - 1);
       } else if (isSwitching) {
-        newVote = type;
         if (type === "like") {
           newUp++;
-          newDown--;
+          newDown = Math.max(0, newDown - 1);
         } else {
-          newUp--;
+          newUp = Math.max(0, newUp - 1);
           newDown++;
         }
       } else {
-        newVote = type;
         if (type === "like") newUp++;
         else newDown++;
       }
 
       return { userVote: newVote, upvotes: newUp, downvotes: newDown };
     });
-
-    try {
-      const res = await fetch(`/api/discussions/${discussionId}/${type}`, {
-        method: "PUT",
-        body: JSON.stringify({ discussionId, type }),
-      });
-
-      if (!res.ok) {
-        if (res.status === 401) {
-          toast.error("Please sign in to vote");
-          router.push("/sign-in");
-        }
-        throw new Error("Failed");
-      }
-
-      router.refresh();
-    } catch (error) {
-      setVoteState(previousState);
-      toast.error("Failed to register vote");
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
@@ -95,30 +115,35 @@ export default function VoteControl({
         variant="ghost"
         size="sm"
         onClick={() => handleVote("like")}
-        disabled={loading}
-        className={`h-8 px-3 gap-2 transition-colors ${
-          voteState.userVote === "like" || isLiked
+        className={`h-8 px-3 gap-2 transition-colors duration-200 ${
+          voteState.userVote === "like"
             ? "text-[#d4af37] bg-[#d4af37]/10"
             : "text-[#a1887f] hover:text-[#d4af37] hover:bg-[#3e2723]/30"
         }`}
       >
-        <ThumbsUp size={16} className={voteState.userVote === "like" ? "fill-current" : ""} />
+        <ThumbsUp
+          size={16}
+          className={`transition-transform ${voteState.userVote === "like" ? "fill-current scale-110" : ""}`}
+        />
         <span className="font-mono text-xs font-bold">{voteState.upvotes}</span>
       </Button>
 
       <div className="w-px h-4 bg-[#3e2723]" />
+
       <Button
         variant="ghost"
         size="sm"
         onClick={() => handleVote("dislike")}
-        disabled={loading}
-        className={`h-8 px-3 transition-colors ${
-          voteState.userVote === "dislike" || isDisliked
+        className={`h-8 px-3 transition-colors duration-200 ${
+          voteState.userVote === "dislike"
             ? "text-red-400 bg-red-900/10"
             : "text-[#a1887f] hover:text-red-400 hover:bg-[#3e2723]/30"
         }`}
       >
-        <ThumbsDown size={16} className={voteState.userVote === "dislike" ? "fill-current" : ""} />
+        <ThumbsDown
+          size={16}
+          className={`transition-transform ${voteState.userVote === "dislike" ? "fill-current scale-110" : ""}`}
+        />
         <span className="font-mono text-xs font-bold">{voteState.downvotes}</span>
       </Button>
     </div>

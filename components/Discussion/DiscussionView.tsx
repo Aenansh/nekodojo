@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
-import { Share2 } from "lucide-react";
 import MarkdownViewer from "@/components/Discussion/Create/MarkdownViewer";
 import VoteControl from "@/components/Discussion/VoteControl";
 import DiscussionDropDown from "./DiscussionDropDown";
 import Share from "./Share";
+import { TAGS } from "@/constants/tags";
+import { Badge } from "../ui/badge";
 
 interface DiscussionProps {
   id: string;
@@ -25,6 +26,7 @@ interface DiscussionProps {
     postUrl: string;
     type: "image" | "video" | "gif";
   }[];
+  tag: string;
   likeCount: number;
   disLikeCount: number;
   _count: {
@@ -36,6 +38,8 @@ interface DiscussionProps {
 }
 
 export default function DiscussionViewer({ discussion }: { discussion: DiscussionProps }) {
+  const postTag = TAGS.find((t) => t.value === discussion.tag);
+
   return (
     <article className="bg-[#1a110d]/40 border border-[#3e2723] rounded-xl overflow-hidden shadow-2xl shadow-black/50 animate-in fade-in zoom-in-95 duration-500">
       <div className="p-6 sm:p-8 border-b border-[#3e2723]/50 bg-[#1a110d]/60">
@@ -44,6 +48,16 @@ export default function DiscussionViewer({ discussion }: { discussion: Discussio
             <h1 className="text-2xl sm:text-3xl font-bold text-[#eaddcf] leading-tight">
               {discussion.title}
             </h1>
+            {postTag && (
+              <div className="mt-2">
+                <Badge
+                  variant="outline"
+                  className={`px-2 py-0.5 rounded text-[10px] font-mono whitespace-nowrap border ${postTag.style} hover:bg-transparent`}
+                >
+                  {postTag.label}
+                </Badge>
+              </div>
+            )}
             <div className="flex items-center gap-3">
               <div className="relative w-10 h-10 rounded-full border border-[#d4af37]/30 overflow-hidden bg-black shrink-0">
                 <Image
@@ -106,7 +120,7 @@ export default function DiscussionViewer({ discussion }: { discussion: Discussio
           isDisliked={discussion.chkDis || false}
         />
 
-        <Share/>
+        <Share />
       </div>
     </article>
   );

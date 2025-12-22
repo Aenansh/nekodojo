@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 import DiscussionViewer from "@/components/Discussion/DiscussionView";
 import { checkDislike, checkLike } from "@/lib/actions/isLiked";
+import CommentSection from "@/components/Comment/CommentSection";
 
 export default function DiscussionPage() {
   const params = useParams();
@@ -83,11 +84,8 @@ export default function DiscussionPage() {
           </Link>
         </div>
         <DiscussionViewer discussion={discussion} />
-
-        {/* 2. Placeholder for where you will put the Comments Component later */}
         <div className="mt-8 border-t border-[#3e2723] pt-8 opacity-50 text-center">
-          {/* <CommentsSection discussionId={discussion.id} /> */}
-          <p className="text-[#5d4037] text-sm italic">Comments module will be loaded here...</p>
+          <CommentSection comments={discussion} />
         </div>
       </div>
     </div>

@@ -15,7 +15,7 @@ interface DiscussionProps {
 
 export async function POST(request: Request) {
   try {
-    const { title, description, authorId, attachments = [] } = await request.json();
+    const { title, description, tag, authorId, attachments = [] } = await request.json();
 
     if (!title || !description || !authorId) {
       return NextResponse.json("Missing fields!", { status: 400 });
@@ -24,6 +24,7 @@ export async function POST(request: Request) {
       data: {
         title,
         description,
+        tag,
         authorId: authorId,
         attachments: {
           create: attachments.map((post: any) => ({

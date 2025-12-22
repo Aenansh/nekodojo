@@ -1,36 +1,43 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { PlusCircle, Loader2, Search, Filter } from "lucide-react";
-import DiscussionPreviewCard from "@/components/Discussion/DiscussionPreview";
-import { Input } from "@/components/ui/input";
+import { PlusCircle, ArrowUpDown, Loader2, FilterIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DiscussionPagination from "@/components/Discussion/Pagination";
-
-type SortOption = "latest" | "top" | "controversial" | "oldest";
+import { useRouter, useSearchParams } from "next/navigation";
+import SearchDiscussion from "@/components/Discussion/SearchDiscussion";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { DiscussionSkeleton } from "@/components/Discussion/DiscussionSkeleton";
+import { AnimatePresence, motion } from "framer-motion";
+import DiscussionPreviewCard from "@/components/Discussion/DiscussionPreview";
 
 export default function ForumPage() {
-  const [discussions, setDiscussions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [discussions, setDiscussions] = useState<any[]>([]);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
   const [totalPage, setTotalPage] = useState(1);
 
-  const [sortBy, setSortBy] = useState<SortOption>("top");
-  const [searchQuery, setSearchQuery] = useState("");
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const currentSort = searchParams.get("sort") || "latest";
+
+  const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
     const fetchDiscussions = async () => {
-      setLoading(true);
+      setIsFetching(true);
       try {
-        const params = new URLSearchParams();
-        params.set("sort", sortBy);
-        params.set("page", currentPage.toString());
-        params.set("limit", "10");
-        if (searchQuery) params.set("query", searchQuery);
-
-        const response = await fetch(`/api/discussions?${params.toString()}`);
+        const response = await fetch(`/api/discussions?${searchParams.toString()}`);
         if (!response.ok) throw new Error("Failed to fetch");
 
         const result = await response.json();
@@ -39,20 +46,20 @@ export default function ForumPage() {
       } catch (error) {
         console.error("Error fetching discussions:", error);
       } finally {
-        setLoading(false);
+        setIsFetching(false);
+        setIsInitialLoading(false);
       }
     };
-    const timer = setTimeout(() => {
-      fetchDiscussions();
-    }, 300);
+    fetchDiscussions();
+  }, [searchParams]);
 
-    return () => clearTimeout(timer);
-  }, [sortBy, searchQuery, currentPage]);
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
+  const handleSortChange = (newSort: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("sort", newSort);
+    params.set("page", "1");
+    router.push(`/discussions?${params.toString()}`);
   };
+
   return (
     <div className="min-h-screen bg-[#0f0b0a] pb-20">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 space-y-8">
@@ -73,59 +80,112 @@ export default function ForumPage() {
           </Link>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between sticky top-24 z-30 bg-[#0f0b0a]/95 backdrop-blur py-2">
-          <div className="relative w-full sm:max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5d4037]" size={18} />
-            <Input
-              placeholder="Search discussions..."
-              value={searchQuery}
-              onChange={handleSearch}
-              className="pl-10 bg-[#1a110d] border-[#3e2723] text-[#eaddcf] placeholder:text-[#5d4037] focus:border-[#d4af37] h-11"
-            />
-          </div>
-          <div className="flex items-center bg-[#1a110d] p-1 rounded-lg border border-[#3e2723] overflow-x-auto w-full sm:w-auto gap-1">
-            {(["top", "latest", "controversial", "oldest"] as SortOption[]).map((option) => (
+        <div className="flex flex-col sm:flex-row gap-2 mb-8 w-full justify-center">
+          <SearchDiscussion inputValue={inputValue} setInputValue={setInputValue} />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <Button
-                suppressHydrationWarning
-                key={option}
-                onClick={() => setSortBy(option)}
-                className={`px-4 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap
-                        ${
-                          sortBy === option
-                            ? "bg-[#d4af37] text-[#1a110d] shadow-sm"
-                            : "text-[#a1887f] hover:text-[#d4af37] hover:bg-[#3e2723]/30"
-                        }
-                    `}
+                variant="outline"
+                className="h-12 px-4 gap-2 border-[#3e2723] bg-[#1a110d]/50 text-[#a1887f] hover:bg-[#1a110d] hover:text-[#d4af37] hover:border-[#d4af37] rounded-xl transition-all min-w-[140px] justify-between shrink-0"
               >
-                {option}
+                <span className="text-xs uppercase tracking-wider font-bold">
+                  {currentSort === "latest" && "Latest"}
+                  {currentSort === "top" && "Top Rated"}
+                  {currentSort === "oldest" && "Oldest"}
+                  {currentSort === "controversial" && "Controversial"}
+                </span>
+                <ArrowUpDown size={16} />
               </Button>
-            ))}
-          </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="bg-[#1a110d] border-[#3e2723] text-[#eaddcf]"
+            >
+              <DropdownMenuLabel className="text-xs text-[#5d4037] uppercase tracking-widest">
+                Sort Scrolls
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-[#3e2723]" />
+
+              <DropdownMenuItem
+                onClick={() => handleSortChange("latest")}
+                className="cursor-pointer focus:bg-[#d4af37]/10 focus:text-[#d4af37]"
+              >
+                Latest
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleSortChange("top")}
+                className="cursor-pointer focus:bg-[#d4af37]/10 focus:text-[#d4af37]"
+              >
+                Top Rated
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleSortChange("oldest")}
+                className="cursor-pointer focus:bg-[#d4af37]/10 focus:text-[#d4af37]"
+              >
+                Oldest
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleSortChange("controversial")}
+                className="cursor-pointer focus:bg-[#d4af37]/10 focus:text-[#d4af37]"
+              >
+                Controversial
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button
+            variant="outline"
+            className="h-12 px-4 gap-2 border-[#3e2723] bg-[#1a110d]/50 text-[#a1887f] hover:bg-[#1a110d] hover:text-[#d4af37] hover:border-[#d4af37] rounded-xl transition-all min-w-[140px] justify-between shrink-0"
+            onClick={() => setInputValue("")}
+          >
+            <FilterIcon size={16} />
+            Remove Filters
+          </Button>
         </div>
-        <div className="space-y-4 min-h-[400px]">
-          {loading ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <Loader2 className="size-10 text-[#d4af37] animate-spin" />
-              <p className="text-[#a1887f] animate-pulse">Consulting the archives...</p>
+        <div className="space-y-4">
+          {isInitialLoading ? (
+            <div className="space-y-6">
+              {[...Array(3)].map((_, i) => (
+                <DiscussionSkeleton key={i} />
+              ))}
             </div>
           ) : discussions.length > 0 ? (
-            discussions.map((discussion) => (
-              <DiscussionPreviewCard key={discussion.id} data={discussion} />
-            ))
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentPage + currentSort}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className={`space-y-4 ${isFetching ? "opacity-50 pointer-events-none grayscale-[0.5]" : ""}`}
+              >
+                {discussions.map((disc) => (
+                  <DiscussionPreviewCard key={disc.id} data={disc} />
+                ))}
+              </motion.div>
+            </AnimatePresence>
           ) : (
             <div className="text-center py-20 border border-dashed border-[#3e2723] rounded-xl">
               <p className="text-[#d4af37] font-bold text-lg">No discussions found</p>
               <p className="text-[#a1887f] text-sm mt-1">Be the first to break the silence.</p>
+              <Button variant="link" onClick={() => setInputValue("")} className="text-[#d4af37]">
+                Clear Filters
+              </Button>
+            </div>
+          )}
+          {isFetching && !isInitialLoading && (
+            <div className="absolute top-10 left-1/2 -translate-x-1/2 z-10 bg-[#1a110d] border border-[#d4af37] rounded-full p-2 shadow-xl animate-in fade-in zoom-in">
+              <Loader2 className="animate-spin h-6 w-6 text-[#d4af37]" />
             </div>
           )}
         </div>
-        {!loading && (
+        {!isInitialLoading && (
           <DiscussionPagination
             currentPage={currentPage}
             totalPages={totalPage}
             onPageChange={(page) => {
-              setCurrentPage(page);
-              window.scrollTo({ top: 0, behavior: "smooth" });
+              const params = new URLSearchParams(searchParams.toString());
+              params.set("page", page.toString());
+              router.push(`/discussions?${params.toString()}`);
             }}
           />
         )}

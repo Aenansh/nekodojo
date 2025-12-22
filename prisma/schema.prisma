@@ -33,9 +33,10 @@ model User {
 }
 
 model Discussions {
-  id          String @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
   description String
+  tag         TagType @default(Discussion)
 
   authorId String
   author   User   @relation(fields: [authorId], references: [id])
@@ -121,4 +122,33 @@ enum AttachmentType {
 enum LikeType {
   like
   dislike
+}
+
+enum TagType {
+  Discussion
+  Senseis_Wisdom
+  Guidance_Needed
+  Kata
+  Ronins_Path
+  Dojo_Life
+  Showcase
+  Dynamic_Programming
+  Graphs_n_Trees
+  Arrays_n_Strings
+  Recursion
+  Bit_Manipulation
+  System_Design
+  Math_n_Geometry
+  TypeScript_JavaScript
+  Python
+  CPP_n_C
+  Java
+  Rust
+  Gate
+  SQL
+  NoSQL
+  Frontend
+  Backend
+  Job
+  Placement
 }

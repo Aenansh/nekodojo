@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import RichTextEditor from "@/components/Discussion/Create/TextEditor";
 import ImageKitUploader, { UploadFile } from "@/components/Discussion/Create/PostUploader";
 import { useUser } from "@clerk/nextjs";
+import { TagSelector } from "@/components/Discussion/Create/Tags";
+import { TagType } from "@/generated/prisma/enums";
 
 export default function CreateDiscussionPage() {
   const router = useRouter();
@@ -21,6 +23,7 @@ export default function CreateDiscussionPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [attachments, setAttachments] = useState<UploadFile[]>([]);
+  const [tag, setTag] = useState<TagType>("Discussion");
 
   const MAX_FILES = 4;
   const remainingSlots = MAX_FILES - attachments.length;
@@ -54,6 +57,7 @@ export default function CreateDiscussionPage() {
         body: JSON.stringify({
           title,
           description,
+          tag,
           authorId: user.user?.id,
           attachments: attachments.map((att) => ({
             id: att.id,
@@ -95,26 +99,46 @@ export default function CreateDiscussionPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <Label
-                htmlFor="title"
-                className="text-[#d4af37] uppercase text-xs tracking-widest font-bold"
-              >
-                Title
-              </Label>
-              <span className={`text-xs ${title.length > 80 ? "text-red-400" : "text-[#5d4037]"}`}>
-                {title.length} / 100
-              </span>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 w-full items-start">
+            {/* LEFT SIDE: Title (Takes up 3/4 of the space) */}
+            <div className="md:col-span-3 space-y-3">
+              <div className="flex justify-between items-center">
+                <Label
+                  htmlFor="title"
+                  className="text-[#d4af37] uppercase text-xs tracking-widest font-bold"
+                >
+                  Title
+                </Label>
+                <span
+                  className={`text-xs ${title.length > 80 ? "text-red-400" : "text-[#5d4037]"}`}
+                >
+                  {title.length} / 100
+                </span>
+              </div>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g., How to implement Recursive Comments in Next.js?"
+                className="h-14 bg-[#1a110d]/50 border-[#3e2723] text-lg text-[#eaddcf] placeholder:text-[#5d4037] focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/50 transition-all rounded-xl"
+                maxLength={100}
+              />
             </div>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g., How to implement Recursive Comments in Next.js?"
-              className="h-14 bg-[#1a110d]/50 border-[#3e2723] text-lg text-[#eaddcf] placeholder:text-[#5d4037] focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/50 transition-all rounded-xl"
-              maxLength={100}
-            />
+
+            {/* RIGHT SIDE: Tags (Takes up 1/4 of the space) */}
+            <div className="md:col-span-1 space-y-3">
+              {/* Label added to match the height of the Title label row */}
+              <div className="flex items-center h-4">
+                <Label className="text-[#d4af37] uppercase text-xs tracking-widest font-bold">
+                  Category
+                </Label>
+              </div>
+
+              {/* Ensure TagSelector fills the width and height matches the input */}
+              <div className="h-14">
+                <TagSelector value={tag} onChange={setTag} />
+              </div>
+            </div>
           </div>
           <div className="space-y-3">
             <RichTextEditor

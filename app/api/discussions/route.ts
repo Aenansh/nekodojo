@@ -1,4 +1,4 @@
-import { Prisma } from "@/generated/prisma/client";
+import { Prisma, TagType } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -7,6 +7,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("query") || "";
     const sort = searchParams.get("sort") || "top";
+    const tagParams = searchParams.get("tag");
 
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
@@ -14,18 +15,30 @@ export async function GET(request: Request) {
     const skip = (page - 1) * limit;
 
     const whereClause: Prisma.DiscussionsWhereInput = {
-      OR: [
-        { title: { contains: query, mode: "insensitive" } },
-        { description: { contains: query, mode: "insensitive" } },
-        {
-          author: {
-            OR: [
-              { firstName: { contains: query, mode: "insensitive" } },
-              { lastName: { contains: query, mode: "insensitive" } },
-              { name: { contains: query, mode: "insensitive" } },
-            ],
-          },
-        },
+      AND: [
+        query
+          ? {
+              OR: [
+                { title: { contains: query, mode: "insensitive" } },
+                { description: { contains: query, mode: "insensitive" } },
+                {
+                  author: {
+                    OR: [
+                      { firstName: { contains: query, mode: "insensitive" } },
+                      { lastName: { contains: query, mode: "insensitive" } },
+                      { name: { contains: query, mode: "insensitive" } },
+                    ],
+                  },
+                },
+              ],
+            }
+          : {},
+
+        tagParams && Object.values(TagType).includes(tagParams as TagType)
+          ? {
+              tag: { equals: tagParams as TagType },
+            }
+          : {},
       ],
     };
 
