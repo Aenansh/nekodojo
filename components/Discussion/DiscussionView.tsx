@@ -9,34 +9,6 @@ import Share from "./Share";
 import { TAGS } from "@/constants/tags";
 import { Badge } from "../ui/badge";
 
-interface DiscussionProps {
-  id: string;
-  title: string;
-  description: string;
-  createdAt: string;
-  authorId: string;
-  author: {
-    firstName: string | null;
-    lastName: string | null;
-    profileUrl: string | null;
-    beltRank: string | null;
-  };
-  attachments: {
-    id: string;
-    postUrl: string;
-    type: "image" | "video" | "gif";
-  }[];
-  tag: string;
-  likeCount: number;
-  disLikeCount: number;
-  _count: {
-    comments: number;
-  };
-  userVote?: "like" | "dislike" | null;
-  chkLike: Boolean;
-  chkDis: Boolean;
-}
-
 export default function DiscussionViewer({ discussion }: { discussion: DiscussionProps }) {
   const postTag = TAGS.find((t) => t.value === discussion.tag);
 

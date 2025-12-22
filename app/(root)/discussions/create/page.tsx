@@ -124,17 +124,12 @@ export default function CreateDiscussionPage() {
                 maxLength={100}
               />
             </div>
-
-            {/* RIGHT SIDE: Tags (Takes up 1/4 of the space) */}
             <div className="md:col-span-1 space-y-3">
-              {/* Label added to match the height of the Title label row */}
               <div className="flex items-center h-4">
                 <Label className="text-[#d4af37] uppercase text-xs tracking-widest font-bold">
                   Category
                 </Label>
               </div>
-
-              {/* Ensure TagSelector fills the width and height matches the input */}
               <div className="h-14">
                 <TagSelector value={tag} onChange={setTag} />
               </div>
@@ -237,7 +232,7 @@ export default function CreateDiscussionPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="bg-[#d4af37] text-[#1a110d] font-bold px-8 py-6 rounded-lg uppercase tracking-widest shadow-[0_0_20px_rgba(212,175,55,0.2)] hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] hover:bg-[#c5a028] transition-all"
+              className="bg-[#d4af37] cursor-pointer text-[#1a110d] font-bold px-8 py-6 rounded-lg uppercase tracking-widest shadow-[0_0_20px_rgba(212,175,55,0.2)] hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] hover:bg-[#c5a028] transition-all"
             >
               {loading ? (
                 <>

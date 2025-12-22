@@ -42,20 +42,23 @@ export async function GET(request: Request) {
       ],
     };
 
-    let orderBy: Prisma.DiscussionsOrderByWithRelationInput = {};
+    let orderBy: any = { createdAt: "desc" };
     switch (sort) {
       case "latest":
         orderBy = { createdAt: "desc" };
         break;
+
       case "oldest":
         orderBy = { createdAt: "asc" };
         break;
+
       case "controversial":
-        orderBy = { disLikeCount: "desc" };
+        orderBy = [{ disLikeCount: "desc" }, { comments: { _count: "desc" } }];
         break;
+
       case "top":
       default:
-        orderBy = { likeCount: "desc" };
+        orderBy = [{ likeCount: "desc" }, { comments: { _count: "desc" } }];
         break;
     }
 

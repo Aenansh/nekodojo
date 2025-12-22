@@ -43,6 +43,9 @@ export default function DiscussionPreviewCard({ data }: { data: DiscussionProps 
             <span className="font-bold text-[#d4af37]">
               {data.author.firstName} {data.author.lastName}
             </span>
+            <span className="text-[10px] uppercase tracking-wider text-[#5d4037] border border-[#3e2723] px-1.5 py-0.5 rounded ml-auto sm:ml-0">
+              {data.author.beltRank || "White Belt"}
+            </span>
             <span className="w-1 h-1 rounded-full bg-[#3e2723]" />
             <span>{formatDistanceToNow(new Date(data.createdAt))} ago</span>
           </div>
@@ -75,10 +78,6 @@ export default function DiscussionPreviewCard({ data }: { data: DiscussionProps 
               <MessageSquare size={12} />
               <span>{data._count.comments} comments</span>
             </div>
-
-            <span className="text-[10px] uppercase tracking-wider text-[#5d4037] border border-[#3e2723] px-1.5 py-0.5 rounded ml-auto sm:ml-0">
-              {data.author.beltRank || "White Belt"}
-            </span>
           </div>
         </div>
 

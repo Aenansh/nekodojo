@@ -6,6 +6,7 @@ interface DiscussionProps {
   description: string;
   attachment: [
     {
+      id: string;
       postUrl: string;
       type: "image" | "video";
     },

@@ -1,0 +1,74 @@
+import imagekit from "@/lib/image-kit";
+import { prisma } from "@/lib/prisma";
+import { currentUser } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+
+interface CommentProps {
+  description: string;
+  authorId: string;
+  discussionId: string;
+  parentId?: string;
+  attachments?: [
+    {
+      id: string;
+      postUrl: string;
+      type: string;
+    },
+  ];
+}
+
+export async function POST(request: Request) {
+  let attId = "";
+  try {
+    const user = await currentUser();
+    if (!user) return NextResponse.json("Unauthorized!", { status: 401 });
+
+    const { description, discussionId, attachment, parentId } = await request.json();
+    if (!description || !discussionId) {
+      return NextResponse.json("Invalid comment!", { status: 400 });
+    }
+    if (attachment) attId = attachment.id;
+    const attachmentData = attachment
+      ? {
+          attachments: {
+            create: {
+              id: attachment.id,
+              postUrl: attachment.postUrl,
+              type: attachment.type,
+            },
+          },
+        }
+      : {};
+    const newComment = await prisma.comments.create({
+      data: {
+        description,
+        authorId: user.id,
+        discussionId: discussionId,
+        parentId: parentId || null,
+        ...attachmentData,
+      },
+      include: {
+        author: {
+          select: {
+            firstName: true,
+            lastName: true,
+            name: true,
+            profileUrl: true,
+            beltRank: true,
+          },
+        },
+        attachments: true,
+      },
+    });
+
+    if (!newComment) {
+      throw new Error("Failed to make the comment");
+    }
+
+    return NextResponse.json(newComment, { status: 201 });
+  } catch (error) {
+    console.error(error);
+    imagekit.deleteFile(attId);
+    return NextResponse.json(error, { status: 500 });
+  }
+}

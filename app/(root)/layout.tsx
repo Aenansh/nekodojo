@@ -26,10 +26,10 @@ const layout = async ({ children }: Readonly<{ children: ReactNode }>) => {
           />
         </div>
         <div className="fixed top-0 left-0 w-full h-48 bg-linear-to-b from-[#0f0b0a] via-[#0f0b0a]/90 to-transparent z-40 pointer-events-none" />
-        <div className="relative z-40">
+        <div className="relative z-51">
           <Navbar />
         </div>
-        <main className="relative z-10 flex-1 pt-24 sm:pt-28 w-full mx-auto animate-in fade-in duration-500 slide-in-from-bottom-2">
+        <main className="relative z-50 flex-1 pt-24 sm:pt-28 w-full mx-auto animate-in fade-in duration-500 slide-in-from-bottom-2">
           {children}
         </main>
       </div>

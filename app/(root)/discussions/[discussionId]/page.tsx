@@ -7,12 +7,14 @@ import { ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 import DiscussionViewer from "@/components/Discussion/DiscussionView";
 import { checkDislike, checkLike } from "@/lib/actions/isLiked";
 import CommentSection from "@/components/Comment/CommentSection";
+import { useUser } from "@clerk/nextjs";
 
 export default function DiscussionPage() {
   const params = useParams();
   const router = useRouter();
+  const { user } = useUser();
 
-  const [discussion, setDiscussion] = useState<any>(null);
+  const [discussion, setDiscussion] = useState<DiscussionProps | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -43,7 +45,7 @@ export default function DiscussionPage() {
     };
     fetchDiscussion();
   }, [discussionId]);
-
+  if (!user) return null;
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0f0b0a] flex flex-col items-center justify-center gap-4">
@@ -85,7 +87,10 @@ export default function DiscussionPage() {
         </div>
         <DiscussionViewer discussion={discussion} />
         <div className="mt-8 border-t border-[#3e2723] pt-8 opacity-50 text-center">
-          <CommentSection comments={discussion} />
+          <p className="text-start text-xl font-bold pb-8">
+            Comments ({discussion._count.comments})
+          </p>
+          <CommentSection discussionId={discussionId} />
         </div>
       </div>
     </div>
