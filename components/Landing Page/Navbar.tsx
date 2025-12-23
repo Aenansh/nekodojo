@@ -28,7 +28,7 @@ const Navbar = () => {
         <div className="shrink-0">
           <Link href="/" className="group flex items-center gap-2">
             <span className="font-black text-xl tracking-tighter text-[#eaddcf] select-none">
-              NEKO
+              NEKKO
               <span className="text-[#d4af37] group-hover:text-white transition-colors duration-300">
                 DOJO
               </span>
